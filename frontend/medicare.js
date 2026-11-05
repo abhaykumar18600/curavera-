@@ -1,7 +1,7 @@
 (async function () {
   var API_HOST = window.location.hostname || 'localhost';
   var API_PROTOCOL = window.location.protocol === 'https:' ? 'https:' : 'http:';
-  var API_URL = API_PROTOCOL + '//' + API_HOST + ':5000';
+  var API_URL = 'https://curavera-web-page.onrender.com';
   document.body.style.visibility = 'hidden';
 
   var authResponse;

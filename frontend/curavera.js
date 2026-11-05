@@ -58,8 +58,7 @@
   const originalSubmitButtonHTML = submitButton.innerHTML;
   const API_HOST = window.location.hostname || 'localhost';
   const API_PROTOCOL = window.location.protocol === 'https:' ? 'https:' : 'http:';
-  const API_URL = API_PROTOCOL + '//' + API_HOST + ':5000';
-
+const API_URL = 'https://curavera-web-page.onrender.com';
   const showFormStatus = (message, type) => {
     status.textContent = message;
     status.className = `cv-status cv-status--show cv-status--${type}`;
