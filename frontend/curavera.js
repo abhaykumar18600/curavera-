@@ -56,9 +56,9 @@
   const form = $('cv-form'), status = $('cv-status');
   const submitButton = form.querySelector('button[type="submit"]');
   const originalSubmitButtonHTML = submitButton.innerHTML;
-  const API_HOST = window.location.hostname || 'localhost';
-  const API_PROTOCOL = window.location.protocol === 'https:' ? 'https:' : 'http:';
-const API_URL = 'https://curavera-web-page.onrender.com';
+  const API_URL = ['localhost', '127.0.0.1'].includes(window.location.hostname)
+    ? window.location.protocol + '//' + window.location.hostname + ':5000'
+    : window.location.origin;
   const showFormStatus = (message, type) => {
     status.textContent = message;
     status.className = `cv-status cv-status--show cv-status--${type}`;

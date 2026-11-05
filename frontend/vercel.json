@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://curavera-web-page.onrender.com/api/:path*"
+    }
+  ]
+}

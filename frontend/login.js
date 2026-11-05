@@ -18,7 +18,9 @@
     m.textContent = text;
     m.className = 'cv-msg' + (ok ? ' cv-is-ok' : '');
   }
-  var API_URL = 'https://curavera-web-page.onrender.com';
+  var API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? window.location.protocol + '//' + window.location.hostname + ':5000'
+    : window.location.origin;
   async function authRequest(path, body) {
     var response = await fetch(API_URL + '/api/auth/' + path, {
       method: 'POST',
