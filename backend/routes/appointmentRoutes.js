@@ -231,20 +231,4 @@ router.post("/", reportUpload.single("report"), async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
-  try {
-    const appointments = await Appointment.find().sort({ createdAt: -1 });
-    return res.status(200).json({
-      success: true,
-      appointments
-    });
-  } catch (error) {
-    console.error("Appointment API error:", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Unable to retrieve appointments right now. Please try again."
-    });
-  }
-});
-
 export default router;
