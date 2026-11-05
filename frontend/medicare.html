@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>MediCare+ Dashboard</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="medicare.css">
+  <style>
+    body {
+      visibility: hidden
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Lucide icons (ek baar define, baar-baar use) -->
+  <svg class="mc-sprite" width="0" height="0" aria-hidden="true" focusable="false">
+    <symbol id="mc-i-heart" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5" />
+        <path d="M3.22 13H9.5l.5-1 2 4.5 2-7 1.5 3.5h5.27" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-cal" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M8 2v3" />
+        <path d="M16 2v3" />
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <path d="M3 9h18" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-users" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <path d="M16 3.128a4 4 0 0 1 0 7.744" />
+        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+        <circle cx="9" cy="7" r="4" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-gear" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" />
+        <circle cx="12" cy="12" r="3" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-search" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m21 21-4.34-4.34" />
+        <circle cx="11" cy="11" r="8" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-bell" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10.268 21a2 2 0 0 0 3.464 0" />
+        <path
+          d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-eye" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0" />
+        <circle cx="12" cy="12" r="3" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-check" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 6 9 17l-5-5" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-x" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-clinic" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 7v4" />
+        <path d="M14 21v-3a2 2 0 0 0-4 0v3" />
+        <path d="M14 9h-4" />
+        <path d="M18 11h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2" />
+        <path d="M18 21V5a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-video" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5" />
+        <rect x="2" y="6" width="14" height="12" rx="2" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-phone" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-chev" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m6 9 6 6 6-6" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-plus" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14" />
+        <path d="M12 5v14" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-camera" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path
+          d="M13.997 4a2 2 0 0 1 1.76 1.05l.486.9A2 2 0 0 0 18.003 7H20a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h1.997a2 2 0 0 0 1.759-1.048l.489-.904A2 2 0 0 1 10.004 4z" />
+        <circle cx="12" cy="13" r="3" />
+      </g>
+    </symbol>
+    <symbol id="mc-i-save" viewBox="0 0 24 24">
+      <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" />
+        <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7" />
+        <path d="M7 3v4a1 1 0 0 0 1 1h7" />
+      </g>
+    </symbol>
+  </svg>
+
+  <div class="mc-app" id="mc-app">
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="mc-sidebar">
+      <div class="mc-logo">
+        <svg class="mc-logo__icon" aria-hidden="true" focusable="false">
+          <use href="#mc-i-heart" />
+        </svg>
+        <span class="mc-logo__text">MediCare+</span>
+      </div>
+      <nav class="mc-nav" aria-label="Main">
+        <button type="button" class="mc-nav__item mc-nav__item--active" data-mc-page="appointments">
+          <svg class="mc-nav__icon" aria-hidden="true" focusable="false">
+            <use href="#mc-i-cal" />
+          </svg><span class="mc-nav__label">Appointments</span>
+        </button>
+        <button type="button" class="mc-nav__item" data-mc-page="patients">
+          <svg class="mc-nav__icon" aria-hidden="true" focusable="false">
+            <use href="#mc-i-users" />
+          </svg><span class="mc-nav__label">Patients</span>
+        </button>
+        <button type="button" class="mc-nav__item" data-mc-page="settings">
+          <svg class="mc-nav__icon" aria-hidden="true" focusable="false">
+            <use href="#mc-i-gear" />
+          </svg><span class="mc-nav__label">Settings</span>
+        </button>
+      </nav>
+    </aside>
+
+    <div class="mc-main">
+
+      <!-- ============ TOPBAR ============ -->
+      <header class="mc-topbar">
+        <label class="mc-search">
+          <svg class="mc-search__icon" aria-hidden="true" focusable="false">
+            <use href="#mc-i-search" />
+          </svg>
+          <input class="mc-search__input" id="mc-appt-search" type="search"
+            placeholder="Search by name, phone or email..." aria-label="Search appointments" autocomplete="off">
+        </label>
+        <div class="mc-topbar__right">
+          <div class="mc-profile">
+            <img class="mc-profile__img" id="mc-profile-img"
+              src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Dr. Abhay Kumar"
+              width="40" height="40">
+            <div class="mc-profile__info">
+              <div class="mc-profile__name" id="mc-account-name">Clinic account</div>
+              <div class="mc-profile__role" id="mc-account-role">Doctor</div>
+            </div>
+          </div>
+          <button type="button" class="mc-btn mc-btn--ghost mc-logout" id="mc-logout">Log out</button>
+        </div>
+      </header>
+
+      <!-- ============ PAGE 1 : APPOINTMENTS ============ -->
+      <section class="mc-page mc-page--active" id="mc-page-appointments">
+        <div class="mc-page__head">
+          <div>
+            <h1 class="mc-page__title">Appointment Requests</h1>
+            <p class="mc-page__sub">View and manage patient appointment requests from website form.</p>
+          </div>
+          <div class="mc-date-picker">
+            <button type="button" class="mc-datebtn" id="mc-today-btn" aria-label="Choose appointment date">
+              <svg class="mc-btn__icon" aria-hidden="true" focusable="false">
+                <use href="#mc-i-cal" />
+              </svg><span id="mc-today">Filter by date</span>
+              <svg class="mc-btn__icon" aria-hidden="true" focusable="false">
+                <use href="#mc-i-chev" />
+              </svg>
+            </button>
+            <input type="date" id="mc-date-filter" class="mc-date-picker__input" aria-label="Choose appointment date">
+          </div>
+          <button type="button" class="mc-date-clear" id="mc-date-clear" hidden>Show all dates</button>
+          <label class="mc-show-hidden"><input type="checkbox" id="mc-show-hidden"> Show hidden requests</label>
+        </div>
+
+        <div class="mc-tabs" id="mc-appt-tabs">
+          <button type="button" class="mc-tab mc-tab--active" data-mc-filter="all">All (<span
+              id="mc-count-all">0</span>)</button>
+          <button type="button" class="mc-tab" data-mc-filter="pending">Pending (<span
+              id="mc-count-pending">0</span>)</button>
+          <button type="button" class="mc-tab" data-mc-filter="confirmed">Confirmed (<span
+              id="mc-count-confirmed">0</span>)</button>
+          <button type="button" class="mc-tab" data-mc-filter="cancelled">Cancelled (<span
+              id="mc-count-cancelled">0</span>)</button>
+        </div>
+
+        <div class="mc-card mc-card--flush">
+          <div class="mc-tablewrap">
+            <table class="mc-table">
+              <thead>
+                <tr>
+                  <th class="mc-table__th" scope="col">#</th>
+                  <th class="mc-table__th" scope="col" colspan="2">Name</th>
+                  <th class="mc-table__th" scope="col">Contact</th>
+                  <th class="mc-table__th" scope="col">Mode</th>
+                  <th class="mc-table__th" scope="col">Date &amp; Time</th>
+                  <th class="mc-table__th" scope="col">Area</th>
+                  <th class="mc-table__th" scope="col">Age</th>
+                  <th class="mc-table__th" scope="col">Gender</th>
+                  <th class="mc-table__th" scope="col">Status</th>
+                  <th class="mc-table__th" scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="mc-appt-body" aria-live="polite">
+                <tr>
+                  <td class="mc-table__td" colspan="11">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mc-pagination" id="mc-appt-pagination" aria-label="Appointment pages"></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE 2 : PATIENTS ============ -->
+      <section class="mc-page" id="mc-page-patients">
+        <div class="mc-page__head">
+          <div>
+            <h1 class="mc-page__title">Patients</h1>
+            <p class="mc-page__sub">View and manage your patients and their appointment history.</p>
+          </div>
+          <button type="button" id="mc-add-patient" class="mc-btn mc-btn--primary"><svg class="mc-btn__icon"
+              aria-hidden="true" focusable="false">
+              <use href="#mc-i-plus" />
+            </svg>Add Patient</button>
+        </div>
+
+        <label class="mc-search mc-search--wide">
+          <svg class="mc-search__icon" aria-hidden="true" focusable="false">
+            <use href="#mc-i-search" />
+          </svg>
+          <input class="mc-search__input" id="mc-pat-search" type="search"
+            placeholder="Search patients by name, phone or email..." aria-label="Search patients" autocomplete="off">
+        </label>
+
+        <div class="mc-card mc-card--flush">
+          <div class="mc-tablewrap">
+            <table class="mc-table">
+              <thead>
+                <tr>
+                  <th class="mc-table__th" scope="col">#</th>
+                  <th class="mc-table__th" scope="col" colspan="2">Name</th>
+                  <th class="mc-table__th" scope="col">Contact</th>
+                  <th class="mc-table__th" scope="col">Age</th>
+                  <th class="mc-table__th" scope="col">Gender</th>
+                  <th class="mc-table__th" scope="col">Total Visits</th>
+                  <th class="mc-table__th" scope="col">Last Visit</th>
+                  <th class="mc-table__th" scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="mc-pat-body" aria-live="polite">
+                <tr>
+                  <td class="mc-table__td" colspan="9">Loading...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="mc-pagination" id="mc-pat-pagination" aria-label="Patient pages"></div>
+        </div>
+      </section>
+
+      <!-- ============ PAGE 3 : SETTINGS ============ -->
+      <section class="mc-page" id="mc-page-settings">
+        <div class="mc-page__head">
+          <div>
+            <h1 class="mc-page__title">Settings</h1>
+            <p class="mc-page__sub">Update your profile and clinic preferences.</p>
+          </div>
+        </div>
+
+        <div class="mc-card">
+          <h2 class="mc-section-title">Profile Information</h2>
+          <div class="mc-profile-edit">
+            <div class="mc-photo">
+              <img class="mc-photo__img" id="mc-photo-img"
+                src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" alt="Profile photo"
+                width="104" height="104">
+              <input class="mc-photo__file" id="mc-photo-file" type="file" accept="image/png,image/jpeg,image/webp">
+              <button type="button" class="mc-btn mc-btn--ghost" id="mc-photo-btn"><svg class="mc-btn__icon"
+                  aria-hidden="true" focusable="false">
+                  <use href="#mc-i-camera" />
+                </svg>Change Photo</button>
+            </div>
+            <div class="mc-form">
+              <div class="mc-field"><label class="mc-field__label" for="mc-name">Full Name <span
+                    class="mc-field__req">*</span></label><input class="mc-field__input" id="mc-name" name="name"
+                  required minlength="3" maxlength="90"></div>
+              <div class="mc-field"><label class="mc-field__label" for="mc-spec">Specialization</label><input
+                  class="mc-field__input" id="mc-spec" name="specialization" maxlength="120"></div>
+              <div class="mc-field"><label class="mc-field__label" for="mc-email">Email Address *</label><input
+                  class="mc-field__input" id="mc-email" name="email" type="email" autocomplete="email" required
+                  maxlength="120"></div>
+              <div class="mc-field"><label class="mc-field__label" for="mc-phone">Phone Number *</label><input
+                  class="mc-field__input" id="mc-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel"
+                  pattern="[6-9][0-9]{9}" minlength="10" maxlength="10" required></div>
+            </div>
+          </div>
+
+          <h2 class="mc-section-title">Clinic Preferences</h2>
+          <div class="mc-form mc-form--three">
+            <div class="mc-field"><label class="mc-field__label" for="mc-mode">Default Consultation Mode</label>
+              <select class="mc-field__input" id="mc-mode" name="mode">
+                <option>Clinic visit</option>
+                <option>Video call</option>
+                <option>Phone call</option>
+              </select>
+            </div>
+            <div class="mc-field"><label class="mc-field__label" for="mc-area">Default Consultation Area</label>
+              <select class="mc-field__input" id="mc-area" name="area">
+                <option>Delhi</option>
+                <option>Noida</option>
+                <option>Ghaziabad</option>
+                <option>Faridabad</option>
+              </select>
+            </div>
+            <div class="mc-field"><label class="mc-field__label" for="mc-days">Available Days</label>
+              <select class="mc-field__input" id="mc-days" name="days">
+                <option>Mon - Sat</option>
+                <option>Mon - Fri</option>
+                <option>All days</option>
+              </select>
+            </div>
+            <div class="mc-field"><label class="mc-field__label" for="mc-start">Consultation Start Time</label>
+              <select class="mc-field__input" id="mc-start" name="start">
+                <option>09:00 AM</option>
+                <option>10:00 AM</option>
+                <option>11:00 AM</option>
+              </select>
+            </div>
+            <div class="mc-field"><label class="mc-field__label" for="mc-end">Consultation End Time</label>
+              <select class="mc-field__input" id="mc-end" name="end">
+                <option>06:00 PM</option>
+                <option>07:00 PM</option>
+                <option>08:00 PM</option>
+              </select>
+            </div>
+          </div>
+          <div class="mc-form__footer">
+            <button type="button" class="mc-btn mc-btn--primary" id="mc-profile-save"><svg class="mc-btn__icon"
+                aria-hidden="true" focusable="false">
+                <use href="#mc-i-save" />
+              </svg>Save Changes</button>
+          </div>
+        </div>
+
+        <section class="mc-card mc-account-review" id="mc-account-review" hidden>
+          <h2 class="mc-section-title">Doctor signup requests</h2>
+          <p class="mc-page__sub">Review medical registration details before granting dashboard access.</p>
+          <div class="mc-tablewrap">
+            <table class="mc-table">
+              <thead>
+                <tr>
+                  <th class="mc-table__th" scope="col">Name</th>
+                  <th class="mc-table__th" scope="col">Email / Phone</th>
+                  <th class="mc-table__th" scope="col">Registration No.</th>
+                  <th class="mc-table__th" scope="col">Requested</th>
+                  <th class="mc-table__th" scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="mc-account-body">
+                <tr>
+                  <td class="mc-table__td" colspan="5">Loading requests...</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Appointment details modal -->
+  <div class="mc-modal" id="mc-modal" role="dialog" aria-modal="true" aria-labelledby="mc-modal-title">
+    <div class="mc-modal__box">
+      <h3 class="mc-modal__title" id="mc-modal-title">Appointment details</h3>
+      <div id="mc-modal-body"></div>
+      <button type="button" class="mc-btn mc-btn--ghost" id="mc-report-download" hidden>Download previous
+        report</button>
+      <div class="mc-report-send">
+        <label class="mc-field__label" for="mc-report-recipient">Patient email address *</label>
+        <input class="mc-field__input" id="mc-report-recipient" type="email" autocomplete="email" maxlength="120"
+          required placeholder="patient@example.com">
+        <label class="mc-field__label" for="mc-report-file">Report to attach *</label>
+        <input class="mc-field__input" id="mc-report-file" type="file"
+          accept="application/pdf,image/jpeg,image/png,image/webp" aria-describedby="mc-report-help">
+        <p class="mc-page__sub" id="mc-report-help">Enter or verify the recipient address. PDF, JPG, PNG or WEBP;
+          maximum 10 MB. The report is emailed as an attachment and is not saved by this action.</p>
+        <button type="button" class="mc-btn mc-btn--email" id="mc-report-send">Email report to patient</button>
+      </div>
+      <button type="button" class="mc-modal__close" id="mc-modal-close">Close</button>
+    </div>
+  </div>
+  <!-- Add Patient modal -->
+  <div class="mc-modal" id="mc-add-modal" role="dialog" aria-modal="true" aria-labelledby="mc-add-title">
+    <div class="mc-modal__box mc-modal__box--wide">
+      <form class="mc-add-form" id="mc-add-form">
+        <h3 class="mc-add-form__title" id="mc-add-title">Request an appointment</h3>
+        <p class="mc-add-form__intro">Fields marked * are required. Patients may attach one previous report (PDF, JPG,
+          PNG or WEBP; max 10 MB).</p>
+
+        <div class="mc-add-form__grid">
+          <div class="mc-add-field mc-add-field--full">
+            <span class="mc-add-field__label">Consultation mode *</span>
+            <div class="mc-add-modes" role="radiogroup" aria-label="Consultation mode">
+              <label><input type="radio" name="mode" value="Clinic visit" checked><span><svg aria-hidden="true">
+                    <use href="#mc-i-clinic" />
+                  </svg>Clinic visit</span></label>
+              <label><input type="radio" name="mode" value="Video call"><span><svg aria-hidden="true">
+                    <use href="#mc-i-video" />
+                  </svg>Video call</span></label>
+              <label><input type="radio" name="mode" value="Phone call"><span><svg aria-hidden="true">
+                    <use href="#mc-i-phone" />
+                  </svg>Phone call</span></label>
+            </div>
+          </div>
+
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-name">Full name *</label>
+            <input class="mc-field__input" id="mc-add-name" name="name" autocomplete="name" placeholder="Your full name"
+              required minlength="2" maxlength="90">
+          </div>
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-phone">Phone number *</label>
+            <input class="mc-field__input" id="mc-add-phone" name="phone" type="tel" autocomplete="tel"
+              inputmode="numeric" placeholder="10-digit Indian mobile number" required pattern="[6-9][0-9]{9}"
+              minlength="10" maxlength="10">
+          </div>
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-age">Age *</label>
+            <input class="mc-field__input" id="mc-add-age" name="age" type="number" min="0" max="120"
+              placeholder="Your age" required>
+          </div>
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-gender">Gender *</label>
+            <select class="mc-field__input" id="mc-add-gender" name="gender" required>
+              <option value="">Select gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-email">Email address</label>
+            <input class="mc-field__input" id="mc-add-email" name="email" type="email" autocomplete="email"
+              placeholder="you@example.com" maxlength="120">
+          </div>
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-area">Consultation area *</label>
+            <select class="mc-field__input" id="mc-add-area" name="consultType" required>
+              <option value="">Select an area</option>
+              <option>General / Internal Medicine</option>
+              <option>Diabetes</option>
+              <option>High blood pressure</option>
+              <option>Thyroid disorders</option>
+              <option>Kidney / urinary concerns</option>
+              <option>Digestive / liver concerns</option>
+              <option>Respiratory concerns</option>
+              <option>Fever / infection</option>
+              <option>Neurology / rheumatology</option>
+              <option>Multiple / complex concerns</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-date">Preferred date *</label>
+            <input class="mc-field__input" id="mc-add-date" name="date" type="date" required>
+          </div>
+          <div class="mc-add-field">
+            <label class="mc-add-field__label" for="mc-add-time">Preferred time</label>
+            <select class="mc-field__input" id="mc-add-time" name="time">
+              <option value="No preference">No preference</option>
+              <option value="Morning">Morning</option>
+              <option value="Afternoon">Afternoon</option>
+              <option value="Evening">Evening</option>
+            </select>
+          </div>
+          <div class="mc-add-field mc-add-field--full">
+            <label class="mc-add-field__label" for="mc-add-note">Brief note (optional)</label>
+            <textarea class="mc-field__input mc-add-field__textarea" id="mc-add-note" name="message" maxlength="400"
+              placeholder="A short note only. Please do not include reports or highly sensitive details."></textarea>
+          </div>
+          <div class="mc-add-field mc-add-field--full">
+            <label class="mc-add-field__label" for="mc-add-report">Previous medical report (optional)</label>
+            <input class="mc-field__input" id="mc-add-report" name="report" type="file"
+              accept="application/pdf,image/jpeg,image/png,image/webp">
+          </div>
+        </div>
+
+        <label class="mc-add-consent">
+          <input type="checkbox" name="consent" value="true" required>
+          <span>I agree to be contacted by the clinic about this request. I understand that submitting it does not
+            confirm an appointment or provide medical advice.</span>
+        </label>
+
+        <button type="submit" class="mc-btn mc-btn--primary mc-add-submit" id="mc-add-submit">Add Patient</button>
+      </form>
+    </div>
+  </div>
+  <div class="mc-toast" id="mc-toast" role="status" aria-live="polite"></div>
+
+  <script src="medicare.js"></script>
+</body>
+
+</html>
