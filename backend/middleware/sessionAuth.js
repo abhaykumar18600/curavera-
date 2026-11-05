@@ -55,11 +55,15 @@ export function requireAdmin(req, res, next) {
 }
 
 export function sessionCookie(token, maxAgeSeconds) {
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; HttpOnly; SameSite=Lax; Path=/api; Max-Age=${maxAgeSeconds}${secure}`;
+  const production = process.env.NODE_ENV === "production";
+  const sameSite = production ? "None" : "Lax";
+  const secure = production ? "; Secure" : "";
+  return `${SESSION_COOKIE}=${encodeURIComponent(token)}; HttpOnly; SameSite=${sameSite}; Path=/api; Max-Age=${maxAgeSeconds}${secure}`;
 }
 
 export function clearedSessionCookie() {
-  const secure = process.env.NODE_ENV === "production" ? "; Secure" : "";
-  return `${SESSION_COOKIE}=; HttpOnly; SameSite=Lax; Path=/api; Max-Age=0${secure}`;
+  const production = process.env.NODE_ENV === "production";
+  const sameSite = production ? "None" : "Lax";
+  const secure = production ? "; Secure" : "";
+  return `${SESSION_COOKIE}=; HttpOnly; SameSite=${sameSite}; Path=/api; Max-Age=0${secure}`;
 }
