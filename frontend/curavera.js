@@ -132,10 +132,23 @@
         body: requestData
       });
 
-      const result = await response.json().catch(() => ({}));
+      const responseText = await response.text();
+      let result = {};
+      if (responseText) {
+        try {
+          result = JSON.parse(responseText);
+        } catch {
+          throw new Error(
+            `The appointment server returned an unexpected response (HTTP ${response.status}). Please try again later.`
+          );
+        }
+      }
 
       if (!response.ok) {
-        throw new Error(result.message || 'Unable to submit your request.');
+        throw new Error(result.message || `Unable to submit your request (HTTP ${response.status}).`);
+      }
+      if (!result.success) {
+        throw new Error(result.message || 'The appointment server did not confirm your request.');
       }
 
       showFormStatus(
