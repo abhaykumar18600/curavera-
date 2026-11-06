@@ -30,7 +30,7 @@ Edit `backend/.env`:
 ```env
 PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/curavera
-CLIENT_URL=https://curavera-frontend.vercel.app,http://127.0.0.1:5500,http://localhost:5500
+CLIENT_URL=https://curavera-frontend-h16z.vercel.app,https://curavera-frontend.vercel.app,http://127.0.0.1:5500,http://localhost:5500
 ADMIN_EMAIL=your-clinic-admin-email
 ADMIN_PASSWORD=use-a-unique-password-with-at-least-12-characters
 PASSWORD_RESET_SECRET=generate-a-random-secret-at-least-32-characters
@@ -72,7 +72,7 @@ Check:
 Open the existing frontend folder in VS Code and use Live Server on `index.html`. Open `medicare.html` to reach the doctor dashboard; unauthenticated users are redirected to `login.html`.
 The example allowed origins are `http://127.0.0.1:5500` and `http://localhost:5500`.
 If Live Server uses another port, add that exact origin to `CLIENT_URL`, then restart the backend.
-For deployment, the frontend's `vercel.json` proxies `/api/*` requests to `https://curavera-appointment-backend.onrender.com`, keeping login cookies on the Vercel origin. In the Render backend's environment, set `CLIENT_URL` to include the exact deployed Vercel origin (for example, `https://curavera-frontend.vercel.app`) along with any local development origins. If you use a custom domain or a different Vercel project URL, include that exact origin too, then redeploy/restart the backend.
+For deployment, the frontend's `vercel.json` proxies `/api/*` requests to `https://curavera-appointment-backend.onrender.com`, keeping login cookies on the Vercel origin. In the Render backend's environment, set `CLIENT_URL` to include the exact deployed Vercel origin, currently `https://curavera-frontend-h16z.vercel.app`, along with any other frontend domains you still use and local development origins. If you use a custom domain or a different Vercel project URL, include that exact origin too, then redeploy/restart the backend.
 
 Use the same host consistently for the frontend and API (both `localhost` or both `127.0.0.1`) so the browser sends the session cookie. Login sessions expire after eight hours.
 
