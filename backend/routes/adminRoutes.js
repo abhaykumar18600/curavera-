@@ -4,7 +4,7 @@ import multer from "multer";
 import Appointment from "../models/Appointment.js";
 import { normalizeIndianPhone } from "../lib/publicVerification.js";
 import { isValidDateOnly, isValidPreferredPeriod } from "../lib/appointmentValidation.js";
-import { createSmtpMailer, validEmail } from "../lib/email.js";
+import { createEmailSender, validEmail } from "../lib/email.js";
 import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
@@ -155,16 +155,16 @@ router.post("/:id/send-report", patientReportUpload.single("report"), async (req
       return res.status(400).json({ success: false, message: "Enter a valid patient email address." });
     }
 
-    const mailer = createSmtpMailer();
+    const mailer = createEmailSender();
     if (!mailer) {
-      return res.status(503).json({ success: false, message: "SMTP email is not configured. The report was not sent." });
+      return res.status(503).json({ success: false, message: "Email delivery is not configured. The report was not sent." });
     }
 
     const safeName = appointment.name.replace(/[&<>"']/g, char => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     }[char]));
     const reportType = PATIENT_REPORT_TYPES[req.file.mimetype];
-    await mailer.transporter.sendMail({
+    await mailer.sendMail({
       from: mailer.from,
       to: recipientEmail,
       subject: "A medical report from Curavera",
@@ -183,7 +183,7 @@ router.post("/:id/send-report", patientReportUpload.single("report"), async (req
     const errorCode = /^[A-Z0-9_]+$/.test(error.code || "") ? ` (${error.code})` : "";
     return res.status(502).json({
       success: false,
-      message: `Could not email the report${errorCode}. Check the SMTP configuration and try again.`
+      message: `Could not email the report${errorCode}. Check the email provider configuration and try again.`
     });
   }
 });
@@ -284,9 +284,9 @@ router.post("/:id/send-confirmation", async (req, res) => {
       return res.status(400).json({ success: false, message: "Appointment confirmed, but no patient email address is available for the slip." });
     }
 
-    const mailer = createSmtpMailer();
+    const mailer = createEmailSender();
     if (!mailer) {
-      return res.status(503).json({ success: false, message: "Appointment confirmed, but SMTP email is not configured. The approval slip was not emailed." });
+      return res.status(503).json({ success: false, message: "Appointment confirmed, but email delivery is not configured. The approval slip was not emailed." });
     }
 
     const safe = value => String(value || "").replace(/[&<>"']/g, char => ({
@@ -294,7 +294,7 @@ router.post("/:id/send-confirmation", async (req, res) => {
     }[char]));
     const date = appointment.date;
     const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:24px;color:#183b38"><h1 style="color:#087f72">Appointment confirmed</h1><p>Hello ${safe(appointment.name)},</p><p>Your appointment request has been approved. Please keep this appointment slip for your reference.</p><table style="border-collapse:collapse;width:100%"><tr><td style="padding:8px;border:1px solid #ddd">Date</td><td style="padding:8px;border:1px solid #ddd">${safe(date)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Preferred time</td><td style="padding:8px;border:1px solid #ddd">${safe(appointment.time)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Consultation</td><td style="padding:8px;border:1px solid #ddd">${safe(appointment.mode)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Request ID</td><td style="padding:8px;border:1px solid #ddd">${safe(appointment._id)}</td></tr></table><p>Please contact the clinic if you need to change your appointment. This slip is not a prescription.</p></div>`;
-    await mailer.transporter.sendMail({
+    await mailer.sendMail({
       from: mailer.from,
       to: appointment.email,
       subject: "Your Curavera appointment is confirmed",
@@ -312,7 +312,7 @@ router.post("/:id/send-confirmation", async (req, res) => {
     const errorCode = /^[A-Z0-9_]+$/.test(error.code || "") ? ` (${error.code})` : "";
     return res.status(502).json({
       success: false,
-      message: `Appointment confirmed, but the slip email failed${errorCode}. Check SMTP settings and retry.`
+      message: `Appointment confirmed, but the slip email failed${errorCode}. Check the email provider settings and retry.`
     });
   }
 });

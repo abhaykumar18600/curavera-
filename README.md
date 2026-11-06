@@ -34,12 +34,10 @@ CLIENT_URL=https://curavera-frontend-h16z.vercel.app,https://curavera-frontend.v
 ADMIN_EMAIL=your-clinic-admin-email
 ADMIN_PASSWORD=use-a-unique-password-with-at-least-12-characters
 PASSWORD_RESET_SECRET=generate-a-random-secret-at-least-32-characters
-SMTP_HOST=your-smtp-host
-SMTP_PORT=587
-SMTP_SECURE=false
-SMTP_USER=your-smtp-username
-SMTP_PASS=your-smtp-password
-SMTP_FROM=no-reply@your-domain.example
+EMAIL_PROVIDER=brevo
+BREVO_API_KEY=your-brevo-api-key
+EMAIL_FROM=your-verified-sender@example.com
+EMAIL_FROM_NAME=Curavera
 ```
 
 Make sure the local MongoDB Server service is running. Compass is a GUI client; it does not start the database server.
@@ -47,13 +45,13 @@ Make sure the local MongoDB Server service is running. Compass is a GUI client; 
 For MongoDB Atlas, replace `MONGO_URI` with your Atlas connection string. Do not share or commit `.env`.
 The backend will not start until the initial admin email and a unique password (12 or more characters) are configured. The admin account is created once and can approve doctor registrations from Medicare Settings. New doctor signups remain pending until approved; approved doctors can access the clinic dashboard.
 
-Password reset sends a one-time 6-digit code by email. Configure SMTP using the values supplied by your email provider and set `PASSWORD_RESET_SECRET` to a new random value (at least 32 characters). For example, generate one locally with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` and paste it into your private `backend/.env`; never commit or share the generated secret or SMTP password. Codes expire in 10 minutes, are limited to five guesses, and successful password changes revoke active sessions. Reset requests return a generic response to avoid exposing whether an account exists.
+Password reset sends a one-time 6-digit code by email. On Render Free, use Brevo's HTTPS API rather than SMTP because Render blocks outbound SMTP ports. Create a Brevo API key, add and verify the sender email address in Brevo, and configure `EMAIL_PROVIDER=brevo`, `BREVO_API_KEY`, `EMAIL_FROM`, and `EMAIL_FROM_NAME` in the backend environment. A free Gmail sender address can be verified for sending, but cannot be domain-authenticated and may have lower deliverability; a domain you own is recommended for production. Also set `PASSWORD_RESET_SECRET` to a new random value (at least 32 characters). For example, generate one locally with `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` and keep it private. Codes expire in 10 minutes, are limited to five guesses, and successful password changes revoke active sessions. Reset requests return a generic response to avoid exposing whether an account exists.
 
 ## 2a. Appointment form behavior
 
-The public appointment form accepts 10-digit Indian mobile numbers beginning with 6–9, requires an email address for the approved appointment slip, and rejects past dates. For today's date, Morning becomes unavailable after 12:00 IST and Afternoon after 17:00 IST; Evening remains available because exact clinic hours have not been configured. Patients can optionally attach one PDF or image report up to 10 MB. Reports are uploaded to Cloudinary as authenticated assets, and doctors obtain short-lived download links only after signing into the dashboard. The clinic still reviews each request before confirming it. On approval, the backend emails the appointment details using the configured SMTP account.
+The public appointment form accepts 10-digit Indian mobile numbers beginning with 6–9, requires an email address for the approved appointment slip, and rejects past dates. For today's date, Morning becomes unavailable after 12:00 IST and Afternoon after 17:00 IST; Evening remains available because exact clinic hours have not been configured. Patients can optionally attach one PDF or image report up to 10 MB. Reports are uploaded to Cloudinary as authenticated assets, and doctors obtain short-lived download links only after signing into the dashboard. The clinic still reviews each request before confirming it. On approval, the backend emails the appointment details using the configured email provider.
 
-Doctors can also open an appointment's details, enter or verify the patient's email address, choose a PDF/JPG/PNG/WEBP report up to 10 MB, and email it as an attachment to that address. This send action requires working SMTP configuration; the uploaded report is held in memory only for the email and is not saved by this action.
+Doctors can also open an appointment's details, enter or verify the patient's email address, choose a PDF/JPG/PNG/WEBP report up to 10 MB, and email it as an attachment to that address. This send action requires working email-provider configuration; the uploaded report is held in memory only for the email and is not saved by this action.
 
 The Settings profile form saves the account's name, email, Indian mobile number, specialization and profile-photo URL to MongoDB. Appointment requests can be filtered by preferred date and reversibly hidden/restored from the default list; hidden requests remain in MongoDB.
 
@@ -74,7 +72,7 @@ The example allowed origins are `http://127.0.0.1:5500` and `http://localhost:55
 If Live Server uses another port, add that exact origin to `CLIENT_URL`, then restart the backend.
 For deployment, the frontend's `vercel.json` proxies `/api/*` requests to `https://curavera-appointment-backend.onrender.com`, keeping login cookies on the Vercel origin. In the Render backend's environment, set `CLIENT_URL` to include the exact deployed Vercel origin, currently `https://curavera-frontend-h16z.vercel.app`, along with any other frontend domains you still use and local development origins. If you use a custom domain or a different Vercel project URL, include that exact origin too, then redeploy/restart the backend.
 
-On Render, configure the backend service with the `backend/` directory as its root, `npm install` as the build command, and `npm start` as the start command. Set `MONGO_URI` to the MongoDB Atlas connection string and `CLIENT_URL` to the exact Vercel origin. After deployment, check `https://curavera-appointment-backend.onrender.com/api/health`; it should return HTTP 200 with `"database":"connected"`. The doctor dashboard fetches appointment requests automatically and refreshes every 60 seconds. Confirming a request saves and updates its status before emailing the confirmation slip, so slow SMTP delivery does not delay the approval UI. Sending a patient report requires working `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_FROM`, `SMTP_USER`, and `SMTP_PASS` values; the dashboard shows a sending state and reports SMTP error codes if delivery fails.
+On Render, configure the backend service with the `backend/` directory as its root, `npm install` as the build command, and `npm start` as the start command. Set `MONGO_URI` to the MongoDB Atlas connection string, `CLIENT_URL` to the exact Vercel origin, and the Brevo variables described above. After deployment, check `https://curavera-appointment-backend.onrender.com/api/health`; it should return HTTP 200 with `"database":"connected"`. The doctor dashboard fetches appointment requests automatically and refreshes every 60 seconds. Confirming a request saves and updates its status before emailing the confirmation slip, so slow email delivery does not delay the approval UI. Report emails and confirmation slips use Brevo's HTTPS API, avoiding Render Free's outbound SMTP port restrictions.
 
 Use the same host consistently for the frontend and API (both `localhost` or both `127.0.0.1`) so the browser sends the session cookie. Login sessions expire after eight hours.
 
@@ -86,4 +84,4 @@ New requests are saved with status `pending`. This does not confirm a booking; t
 
 ## Notes before accepting real patient requests
 
-This is a starter integration, not a production-ready clinical booking platform. Do not collect sensitive health details in the free-text note. Before public launch, add a clear privacy notice and retention policy, protect admin access, use HTTPS, restrict database access, and review applicable Indian data-protection and healthcare requirements. Never expose MongoDB credentials or SMTP passwords in frontend JavaScript.
+This is a starter integration, not a production-ready clinical booking platform. Do not collect sensitive health details in the free-text note. Before public launch, add a clear privacy notice and retention policy, protect admin access, use HTTPS, restrict database access, and review applicable Indian data-protection and healthcare requirements. Never expose MongoDB credentials, email API keys, or email passwords in frontend JavaScript.

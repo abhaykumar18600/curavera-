@@ -5,7 +5,7 @@ import rateLimit from "express-rate-limit";
 import mongoose from "mongoose";
 import DoctorAccount from "../models/DoctorAccount.js";
 import DoctorSession from "../models/DoctorSession.js";
-import { createSmtpMailer, validEmail } from "../lib/email.js";
+import { createEmailSender, validEmail } from "../lib/email.js";
 import { normalizeIndianPhone } from "../lib/publicVerification.js";
 import {
   clearedSessionCookie,
@@ -62,7 +62,7 @@ async function issueSession(account, res) {
 
 function getPasswordResetMailer() {
   const secret = process.env.PASSWORD_RESET_SECRET || "";
-  const mailer = createSmtpMailer();
+  const mailer = createEmailSender();
   return mailer && secret.length >= 32 ? { ...mailer, secret } : null;
 }
 
@@ -146,7 +146,7 @@ router.post("/forgot-password", resetLimiter, async (req, res) => {
     await account.save();
 
     try {
-      await mailer.transporter.sendMail({
+      await mailer.sendMail({
         from: mailer.from,
         to: account.email,
         subject: "Your Curavera password reset code",
