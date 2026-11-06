@@ -358,6 +358,8 @@
     formData.append('report', file);
     formData.append('email', recipientInput.value.trim());
     button.disabled = true;
+    var originalLabel = button.textContent;
+    button.textContent = 'Sending report...';
     try {
       var result = await api('/' + encodeURIComponent(button.dataset.appointmentId) + '/send-report', {
         method: 'POST',
@@ -369,6 +371,7 @@
       toast(error.message);
     } finally {
       button.disabled = false;
+      button.textContent = originalLabel;
     }
   });
   document.getElementById('mc-modal-close').addEventListener('click', function () {
@@ -409,9 +412,19 @@
       });
       item.status = res.data.status;
       render(); renderPatients();
-      toast(res.data.emailSent === true
-        ? 'Appointment confirmed; slip emailed.'
-        : (res.data.emailMessage || ('Marked as ' + item.status)));
+      if (item.status === 'confirmed' && item.recordType !== 'patient') {
+        toast('Appointment confirmed. Sending the confirmation slip...');
+        try {
+          var emailResult = await api('/' + encodeURIComponent(id) + '/send-confirmation', {
+            method: 'POST'
+          });
+          toast(emailResult.message);
+        } catch (emailError) {
+          toast(emailError.message);
+        }
+      } else {
+        toast('Marked as ' + item.status);
+      }
     } catch (err) {
       btn.disabled = false;
       toast(err.message);

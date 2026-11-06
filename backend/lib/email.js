@@ -23,6 +23,9 @@ export function createSmtpMailer() {
       host,
       port,
       secure,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 20000,
       ...(user ? { auth: { user, pass } } : {})
     })
   };

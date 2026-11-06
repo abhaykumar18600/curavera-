@@ -179,8 +179,12 @@ router.post("/:id/send-report", patientReportUpload.single("report"), async (req
 
     return res.json({ success: true, message: `Report emailed to ${recipientEmail}.` });
   } catch (error) {
-    console.error("Patient report email error:", error.message);
-    return res.status(500).json({ success: false, message: "Could not email the report. Check SMTP settings and try again." });
+    console.error("Patient report email error:", error.code || "UNKNOWN", error.message);
+    const errorCode = /^[A-Z0-9_]+$/.test(error.code || "") ? ` (${error.code})` : "";
+    return res.status(502).json({
+      success: false,
+      message: `Could not email the report${errorCode}. Check the SMTP configuration and try again.`
+    });
   }
 });
 
@@ -253,53 +257,63 @@ router.patch("/:id/status", async (req, res) => {
       return res.status(404).json({ success: false, message: "Appointment not found." });
     }
 
-    let emailSent = null;
-    let emailMessage = "";
-    if (updated.recordType !== "patient" && updated.status === "confirmed" && !updated.confirmationEmailSentAt) {
-      if (!updated.email) {
-        emailSent = false;
-        emailMessage = "Appointment confirmed, but no patient email address is available for the slip.";
-      } else {
-        const mailer = createSmtpMailer();
-        if (!mailer) {
-          emailSent = false;
-          emailMessage = "Appointment confirmed, but SMTP email is not configured. The approval slip was not emailed.";
-        } else {
-          const safe = value => String(value || "").replace(/[&<>"']/g, char => ({
-            "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
-          }[char]));
-          const date = updated.date;
-          const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:24px;color:#183b38"><h1 style="color:#087f72">Appointment confirmed</h1><p>Hello ${safe(updated.name)},</p><p>Your appointment request has been approved. Please keep this appointment slip for your reference.</p><table style="border-collapse:collapse;width:100%"><tr><td style="padding:8px;border:1px solid #ddd">Date</td><td style="padding:8px;border:1px solid #ddd">${safe(date)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Preferred time</td><td style="padding:8px;border:1px solid #ddd">${safe(updated.time)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Consultation</td><td style="padding:8px;border:1px solid #ddd">${safe(updated.mode)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Request ID</td><td style="padding:8px;border:1px solid #ddd">${safe(updated._id)}</td></tr></table><p>Please contact the clinic if you need to change your appointment. This slip is not a prescription.</p></div>`;
-          try {
-            await mailer.transporter.sendMail({
-              from: mailer.from,
-              to: updated.email,
-              subject: "Your Curavera appointment is confirmed",
-              text: `Hello ${updated.name}, your appointment is confirmed for ${date} (${updated.time}), ${updated.mode}. Request ID: ${updated._id}.`,
-              html
-            });
-            await Appointment.updateOne(
-              { _id: updated._id, confirmationEmailSentAt: null },
-              { $set: { confirmationEmailSentAt: new Date() } }
-            );
-            emailSent = true;
-          } catch (mailError) {
-            console.error("Appointment confirmation email error:", mailError.message);
-            emailSent = false;
-            emailMessage = "Appointment confirmed, but sending the email slip failed. Check SMTP settings and retry.";
-          }
-        }
-      }
-    }
-
-    res.json({
-      success: true,
-      data: updated,
-      ...(emailSent === null ? {} : { emailSent, emailMessage })
-    });
+    return res.json({ success: true, data: updated });
   } catch (error) {
     console.error("Admin status error:", error.message);
     res.status(500).json({ success: false, message: "Could not update status." });
+  }
+});
+
+router.post("/:id/send-confirmation", async (req, res) => {
+  try {
+    if (!mongoose.isValidObjectId(req.params.id)) {
+      return res.status(400).json({ success: false, message: "Invalid appointment id." });
+    }
+
+    const appointment = await Appointment.findById(req.params.id).lean();
+    if (!appointment || appointment.recordType === "patient") {
+      return res.status(404).json({ success: false, message: "Appointment request not found." });
+    }
+    if (appointment.status !== "confirmed") {
+      return res.status(409).json({ success: false, message: "Confirm the appointment before sending its slip." });
+    }
+    if (appointment.confirmationEmailSentAt) {
+      return res.json({ success: true, message: "The confirmation slip was already emailed." });
+    }
+    if (!appointment.email) {
+      return res.status(400).json({ success: false, message: "Appointment confirmed, but no patient email address is available for the slip." });
+    }
+
+    const mailer = createSmtpMailer();
+    if (!mailer) {
+      return res.status(503).json({ success: false, message: "Appointment confirmed, but SMTP email is not configured. The approval slip was not emailed." });
+    }
+
+    const safe = value => String(value || "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[char]));
+    const date = appointment.date;
+    const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;padding:24px;color:#183b38"><h1 style="color:#087f72">Appointment confirmed</h1><p>Hello ${safe(appointment.name)},</p><p>Your appointment request has been approved. Please keep this appointment slip for your reference.</p><table style="border-collapse:collapse;width:100%"><tr><td style="padding:8px;border:1px solid #ddd">Date</td><td style="padding:8px;border:1px solid #ddd">${safe(date)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Preferred time</td><td style="padding:8px;border:1px solid #ddd">${safe(appointment.time)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Consultation</td><td style="padding:8px;border:1px solid #ddd">${safe(appointment.mode)}</td></tr><tr><td style="padding:8px;border:1px solid #ddd">Request ID</td><td style="padding:8px;border:1px solid #ddd">${safe(appointment._id)}</td></tr></table><p>Please contact the clinic if you need to change your appointment. This slip is not a prescription.</p></div>`;
+    await mailer.transporter.sendMail({
+      from: mailer.from,
+      to: appointment.email,
+      subject: "Your Curavera appointment is confirmed",
+      text: `Hello ${appointment.name}, your appointment is confirmed for ${date} (${appointment.time}), ${appointment.mode}. Request ID: ${appointment._id}.`,
+      html
+    });
+    await Appointment.updateOne(
+      { _id: appointment._id, confirmationEmailSentAt: null },
+      { $set: { confirmationEmailSentAt: new Date() } }
+    );
+
+    return res.json({ success: true, message: `Appointment confirmed; slip emailed to ${appointment.email}.` });
+  } catch (error) {
+    console.error("Appointment confirmation email error:", error.code || "UNKNOWN", error.message);
+    const errorCode = /^[A-Z0-9_]+$/.test(error.code || "") ? ` (${error.code})` : "";
+    return res.status(502).json({
+      success: false,
+      message: `Appointment confirmed, but the slip email failed${errorCode}. Check SMTP settings and retry.`
+    });
   }
 });
 
