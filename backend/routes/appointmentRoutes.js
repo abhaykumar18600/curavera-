@@ -6,7 +6,11 @@ import cloudinary from "../config/cloudinary.js";
 import {
   normalizeIndianPhone
 } from "../lib/publicVerification.js";
-import { isValidDateOnly, isValidPreferredPeriod } from "../lib/appointmentValidation.js";
+import {
+  isConsentGiven,
+  isValidDateOnly,
+  isValidPreferredPeriod
+} from "../lib/appointmentValidation.js";
 
 const router = express.Router();
 
@@ -179,7 +183,7 @@ router.post("/", reportUpload.single("report"), async (req, res) => {
       });
     }
 
-    if (body.consent !== true) {
+    if (!isConsentGiven(body.consent)) {
       return res.status(400).json({
         success: false,
         message: "Please accept the consent statement."
