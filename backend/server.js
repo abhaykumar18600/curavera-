@@ -1,6 +1,7 @@
 
 import "dotenv/config";
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
@@ -65,9 +66,13 @@ app.use(express.json({ limit: "10kb" }));
 
 // Health check
 app.get("/api/health", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Curavera appointment API is running",
+  const databaseConnected = mongoose.connection.readyState === 1;
+  return res.status(databaseConnected ? 200 : 503).json({
+    success: databaseConnected,
+    message: databaseConnected
+      ? "Curavera appointment API and database are ready"
+      : "Curavera appointment API is running but the database is unavailable",
+    database: databaseConnected ? "connected" : "disconnected",
   });
 });
 
