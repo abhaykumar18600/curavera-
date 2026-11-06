@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://curavera-web-page.onrender.com/api/:path*"
+      "destination": "https://curavera-appointment-backend.onrender.com/api/:path*"
     }
   ]
 }
