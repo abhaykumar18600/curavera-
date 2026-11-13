@@ -152,7 +152,7 @@
       }
 
       showFormStatus(
-        `Thanks, ${first}. Your request is with the clinic for review. If approved, the appointment slip will be emailed to you. Submission does not confirm the appointment.`,
+        `Thanks, ${first}. Your request is with the clinic for review. The clinic will contact you by phone${appointmentData.email ? ' and email the appointment slip if approved' : ''}. Submission does not confirm the appointment.`,
         'success'
       );
 

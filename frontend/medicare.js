@@ -413,14 +413,18 @@
       item.status = res.data.status;
       render(); renderPatients();
       if (item.status === 'confirmed' && item.recordType !== 'patient') {
-        toast('Appointment confirmed. Sending the confirmation slip...');
-        try {
-          var emailResult = await api('/' + encodeURIComponent(id) + '/send-confirmation', {
-            method: 'POST'
-          });
-          toast(emailResult.message);
-        } catch (emailError) {
-          toast(emailError.message);
+        if (item.email) {
+          toast('Appointment confirmed. Sending the confirmation slip...');
+          try {
+            var emailResult = await api('/' + encodeURIComponent(id) + '/send-confirmation', {
+              method: 'POST'
+            });
+            toast(emailResult.message);
+          } catch (emailError) {
+            toast(emailError.message);
+          }
+        } else {
+          toast('Appointment confirmed. No email address was provided; contact the patient by phone.');
         }
       } else {
         toast('Marked as ' + item.status);

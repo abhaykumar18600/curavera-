@@ -281,7 +281,10 @@ router.post("/:id/send-confirmation", async (req, res) => {
       return res.json({ success: true, message: "The confirmation slip was already emailed." });
     }
     if (!appointment.email) {
-      return res.status(400).json({ success: false, message: "Appointment confirmed, but no patient email address is available for the slip." });
+      return res.json({
+        success: true,
+        message: "Appointment confirmed. No email address was provided, so the slip was not emailed."
+      });
     }
 
     const mailer = createEmailSender();

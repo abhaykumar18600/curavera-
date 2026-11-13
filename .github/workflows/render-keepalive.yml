@@ -16,4 +16,4 @@ jobs:
           curl -fsS --max-time 30 \
             https://curavera-appointment-backend.onrender.com/api/health
 
-          echo "Curavera Backend is healthy!"
+          echo "Curavera Backend health check completed!"

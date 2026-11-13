@@ -134,10 +134,10 @@ router.post("/", reportUpload.single("report"), async (req, res) => {
       });
     }
 
-    if (email.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (email && (email.length > 120 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))) {
       return res.status(400).json({
         success: false,
-        message: "Enter a valid email address to receive your confirmed appointment slip."
+        message: "Enter a valid email address or leave the field blank."
       });
     }
 
