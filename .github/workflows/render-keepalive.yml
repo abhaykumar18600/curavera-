@@ -1,0 +1,19 @@
+name: Keep Curavera Backend Awake
+
+on:
+  schedule:
+    - cron: "3,13,23,33,43,53 * * * *"
+
+  workflow_dispatch:
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Ping Curavera Health API
+        run: |
+          curl -fsS --max-time 30 \
+            https://curavera-appointment-backend.onrender.com/api/health
+
+          echo "Curavera Backend is healthy!"
